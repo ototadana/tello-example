@@ -1,4 +1,5 @@
 import socket
+import threading
 import time
 
 
@@ -25,6 +26,21 @@ data, _ = state_sock.recvfrom(1024)
 print()
 print(f'battery: {__get_drone_state(data)["bat"]}%')
 print()
+
+
+def receive_state():
+    while True:
+        try:
+            data, _ = state_sock.recvfrom(1024)
+            print(f'battery: {__get_drone_state(data)["bat"]}%')
+        except Exception:
+            print("\nExit . . .\n")
+            break
+
+
+state_receive_thread = threading.Thread(target=receive_state)
+state_receive_thread.start()
+
 
 print("Tello Python3 Demo.")
 print("Tello: takeoff land flip forward back left right")
