@@ -1,6 +1,18 @@
 import socket
 import time
 
+
+def __get_drone_state(data):
+    s = data.decode(errors="replace")
+    values = s.split(";")
+    state = {}
+    for v in values:
+        kv = v.split(":")
+        if len(kv) > 1:
+            state[kv[0]] = float(kv[1])
+    return state
+
+
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("", 8889))
 
@@ -11,7 +23,8 @@ state_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 state_sock.bind(("", 8890))
 data, _ = state_sock.recvfrom(1024)
 print()
-print(data.decode())
+print(f'battery: {__get_drone_state(data)["bat"]}%')
+print()
 
 print("Tello Python3 Demo.")
 print("Tello: takeoff land flip forward back left right")
