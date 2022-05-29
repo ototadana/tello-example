@@ -21,12 +21,11 @@ while True:
             sock.close()
             break
 
-        data = msg.encode(encoding="utf-8")
-        sent = sock.sendto(data, ("192.168.10.1", 8889))
+        sock.sendto(msg.encode(), ("192.168.10.1", 8889))
         start = time.time()
 
-        data, server = sock.recvfrom(1518)
-        print(data.decode(encoding="utf-8"), f"{time.time() - start:.1f}")
+        data, _ = sock.recvfrom(1024)
+        print(data.decode(), f"{time.time() - start:.1f}\n")
     except KeyboardInterrupt:
         print(" . . .")
         sock.close()
