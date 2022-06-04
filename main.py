@@ -2,6 +2,7 @@ import socket
 import threading
 import time
 
+import cv2
 import PySimpleGUI as sg
 
 layout = [
@@ -25,6 +26,7 @@ class Info:
     def __init__(self):
         self.__state = {}
         self.__is_active = True
+        self.__image = None
 
     def set_states(self, states):
         self.__state = states
@@ -40,6 +42,12 @@ class Info:
 
     def stop(self):
         self.__is_active = False
+
+    def set_image(self, image):
+        self.__image = image
+
+    def get_image(self):
+        return self.__image
 
 
 info = Info()
@@ -61,6 +69,8 @@ sock.bind(("", 8889))
 
 sock.sendto("command".encode(), ("192.168.10.1", 8889))
 sock.recvfrom(1024)
+sock.sendto("streamon".encode(), ("192.168.10.1", 8889))
+sock.recvfrom(1024)
 
 state_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 state_sock.bind(("", 8890))
@@ -78,6 +88,24 @@ def receive_state():
 
 state_receive_thread = threading.Thread(target=receive_state)
 state_receive_thread.start()
+
+
+def receive_video():
+    cap = cv2.VideoCapture("udp://0.0.0.0:11111?overrun_nonfatal=1")
+
+    while info.is_active():
+        success, image = cap.read()
+        if not success:
+            continue
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        info.set_image(image)
+
+    cap.release()
+
+
+video_receive_thread = threading.Thread(target=receive_video)
+video_receive_thread.start()
+
 
 while True:
     msg = ""
