@@ -17,8 +17,21 @@ layout = [
 window = sg.Window("My Drone", layout)
 
 while True:
+    msg = ""
     event, values = window.read(timeout=1)
-    if event == sg.WINDOW_CLOSED:
+    if event == sg.WINDOW_CLOSED or event == "Quit":
         break
+    if event == "OK":
+        msg = values[0]
+    if event == "Takeoff":
+        msg = "takeoff"
+    if event == "Land":
+        msg = "land"
+
+    if msg == "":
+        continue
+
+    window["sent"].update(msg)
+    window["recv"].update("ok")
 
 window.close()
