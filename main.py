@@ -3,9 +3,13 @@ import threading
 import time
 
 import cv2
+import numpy as np
 import PySimpleGUI as sg
+from PIL import Image, ImageTk
 
+DISPLAY_SIZE = (800, 600)
 layout = [
+    [sg.Image(filename="", key="image", size=DISPLAY_SIZE)],
     [sg.Text("Command:"), sg.Input(), sg.Button("OK")],
     [
         sg.Text(key="sent", font=("monospace", 20)),
@@ -111,6 +115,16 @@ while True:
     msg = ""
     event, values = window.read(timeout=1)
     window["state"].update(f'battery: {info.get_state("bat"):.1f}%')
+
+    image = info.get_image()
+    if image is None:
+        continue
+
+    h, w, _ = np.shape(image)
+    r = DISPLAY_SIZE[0] / w
+    image = cv2.resize(image, (int(w * r), int(h * r)))
+    photoImage = ImageTk.PhotoImage(Image.fromarray(image))
+    window["image"].update(data=photoImage)
 
     if event == sg.WINDOW_CLOSED or event == "Quit":
         break
