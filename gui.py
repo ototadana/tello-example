@@ -24,6 +24,7 @@ window = sg.Window("My Drone", layout)
 class Info:
     def __init__(self):
         self.__state = {}
+        self.__is_active = True
 
     def set_states(self, states):
         self.__state = states
@@ -34,12 +35,18 @@ class Info:
     def get_state(self, name):
         return self.__state.get(name, 0.0)
 
+    def is_active(self):
+        return self.__is_active
+
+    def stop(self):
+        self.__is_active = False
+
 
 info = Info()
 
 
 def receive_state():
-    while True:
+    while info.is_active():
         time.sleep(1)
         try:
             info.set_states({"bat": random.random() * 100})
@@ -71,4 +78,5 @@ while True:
     window["sent"].update(msg)
     window["recv"].update("ok")
 
+info.stop()
 window.close()
