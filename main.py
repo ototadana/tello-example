@@ -31,6 +31,9 @@ class Info:
         self.__state = {}
         self.__is_active = True
         self.__image = None
+        self.__command = ""
+        self.__sent_command = ""
+        self.__result = ""
 
     def set_states(self, states):
         self.__state = states
@@ -52,6 +55,26 @@ class Info:
 
     def get_image(self):
         return self.__image
+
+    def entry_command(self, command):
+        self.__command = command
+
+    def pick_command(self):
+        command = self.__command
+        self.__command = ""
+        return command
+
+    def set_sent_command(self, command):
+        self.__sent_command = command
+
+    def get_sent_command(self):
+        return self.__sent_command
+
+    def set_command_result(self, result):
+        self.__result = result
+
+    def get_command_result(self):
+        return self.__result
 
 
 info = Info()
@@ -111,6 +134,23 @@ video_receive_thread = threading.Thread(target=receive_video)
 video_receive_thread.start()
 
 
+def send_command():
+    while info.is_active():
+        msg = info.pick_command()
+        if msg == "":
+            continue
+
+        sock.sendto(msg.encode(), ("192.168.10.1", 8889))
+        info.set_command_result("")
+        info.set_sent_command(msg)
+        start = time.time()
+        data, _ = sock.recvfrom(1024)
+        info.set_command_result(f"{data.decode()} {time.time() - start:.1f}")
+
+
+command_send_thread = threading.Thread(target=send_command)
+command_send_thread.start()
+
 while True:
     msg = ""
     event, values = window.read(timeout=1)
@@ -135,14 +175,12 @@ while True:
     if event == "Land":
         msg = "land"
 
-    if msg == "":
-        continue
+    if msg != "":
+        info.entry_command(msg)
 
-    sock.sendto(msg.encode(), ("192.168.10.1", 8889))
-    window["sent"].update(msg)
-    start = time.time()
-    data, _ = sock.recvfrom(1024)
-    window["recv"].update(f"{data.decode()} {time.time() - start:.1f}")
+    window["sent"].update(info.get_sent_command())
+    window["recv"].update(info.get_command_result())
+
 
 
 info.stop()
