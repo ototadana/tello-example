@@ -54,7 +54,5 @@ class Dashboard:
             window["sent"].update(info.get_sent_command())
             window["recv"].update(info.get_command_result())
 
-
-
         info.stop()
         window.close()
