@@ -3,9 +3,12 @@ import numpy as np
 import PySimpleGUI as sg
 from PIL import Image, ImageTk
 
+from info import Info
+from runnable import Runnable
 
-class Dashboard:
-    def run(self, info):
+
+class Dashboard(Runnable):
+    def run(self, info: Info) -> None:
         DISPLAY_SIZE = (800, 600)
         layout = [
             [sg.Image(filename="", key="image", size=DISPLAY_SIZE)],

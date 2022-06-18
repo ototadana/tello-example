@@ -1,8 +1,12 @@
+from __future__ import annotations
 import socket
 
+from info import Info
+from startable import Startable
 
-class DroneStateReceiver:
-    def start(self, info):
+
+class DroneStateReceiver(Startable):
+    def start(self, info: Info) -> None:
         state_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         state_sock.bind(("", 8890))
 
@@ -14,7 +18,7 @@ class DroneStateReceiver:
                 print("\nExit . . .\n")
                 break
 
-    def __get_drone_state(self, data):
+    def __get_drone_state(self, data: bytes) -> dict[str, float]:
         s = data.decode(errors="replace")
         values = s.split(";")
         state = {}

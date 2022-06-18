@@ -1,9 +1,12 @@
 import socket
 import time
 
+from info import Info
+from startable import Startable
 
-class DroneCommandRequester:
-    def start(self, info):
+
+class DroneCommandRequester(Startable):
+    def start(self, info: Info) -> None:
         DRONE_ADDRESS = ("192.168.10.1", 8889)
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.bind(("", 8889))
