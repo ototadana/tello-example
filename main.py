@@ -136,6 +136,7 @@ video_receive_thread.start()
 
 def send_command():
     while info.is_active():
+        time.sleep(0.1)
         msg = info.pick_command()
         if msg == "":
             continue
