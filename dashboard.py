@@ -30,6 +30,9 @@ class Dashboard(Runnable):
         while True:
             msg = ""
             event, values = window.read(timeout=1)
+            if event == sg.WINDOW_CLOSED or event == "Quit":
+                break
+
             window["state"].update(f'battery: {info.get_state("bat"):.1f}%')
 
             image = info.get_image()
@@ -42,8 +45,6 @@ class Dashboard(Runnable):
             photoImage = ImageTk.PhotoImage(Image.fromarray(image))
             window["image"].update(data=photoImage)
 
-            if event == sg.WINDOW_CLOSED or event == "Quit":
-                break
             if event == "OK":
                 msg = values[0]
             if event == "Takeoff":
