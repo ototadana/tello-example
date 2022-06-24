@@ -4,11 +4,15 @@ import PySimpleGUI as sg
 from PIL import Image, ImageTk
 
 from info import Info
+from logger import get_logger
 from runnable import Runnable
 
 
 class Dashboard(Runnable):
     def run(self, info: Info) -> None:
+        logger = get_logger(__name__)
+        logger.info("start")
+
         DISPLAY_SIZE = (800, 600)
         layout = [
             [sg.Image(filename="", key="image", size=DISPLAY_SIZE)],
@@ -60,3 +64,4 @@ class Dashboard(Runnable):
 
         info.stop()
         window.close()
+        logger.info("done")

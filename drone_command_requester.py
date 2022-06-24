@@ -2,11 +2,15 @@ import socket
 import time
 
 from info import Info
+from logger import get_logger
 from startable import Startable
 
 
 class DroneCommandRequester(Startable):
     def start(self, info: Info) -> None:
+        logger = get_logger(__name__)
+        logger.info("start")
+
         DRONE_ADDRESS = ("192.168.10.1", 8889)
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.bind(("", 8889))
@@ -28,3 +32,5 @@ class DroneCommandRequester(Startable):
             start = time.time()
             data, _ = sock.recvfrom(1024)
             info.set_command_result(f"{data.decode()} {time.time() - start:.1f}")
+
+        logger.info("done")
