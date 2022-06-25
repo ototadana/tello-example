@@ -12,6 +12,7 @@ class DroneStateReceiver(Startable):
         logger.info("start")
 
         state_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        state_sock.settimeout(10)
         state_sock.bind(("", 8890))
 
         while info.is_active():

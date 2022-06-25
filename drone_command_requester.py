@@ -13,6 +13,7 @@ class DroneCommandRequester(Startable):
 
         DRONE_ADDRESS = ("192.168.10.1", 8889)
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.settimeout(10)
         sock.bind(("", 8889))
 
         sock.sendto("command".encode(), DRONE_ADDRESS)
