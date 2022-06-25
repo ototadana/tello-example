@@ -20,8 +20,7 @@ class DroneStateReceiver(Startable):
                 data, _ = state_sock.recvfrom(1024)
                 info.set_states(self.__get_drone_state(data))
             except Exception:
-                print("\nExit . . .\n")
-                break
+                logger.exception("communication error")
 
         logger.info("done")
 
