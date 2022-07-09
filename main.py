@@ -4,6 +4,7 @@ from drone_command_requester import DroneCommandRequester
 from drone_state_receiver import DroneStateReceiver
 from drone_video_receiver import DroneVideoReceiver
 from dashboard import Dashboard
+from hand_sensor import HandSensor
 from stub_command_requester import StubCommandRequester
 from stub_state_receiver import StubStateReceiver
 from stub_video_receiver import StubVideoReceiver
@@ -26,6 +27,7 @@ if args.stub:
 else:
     startables = [DroneCommandRequester(), DroneStateReceiver(), DroneVideoReceiver()]
 
+startables.append(HandSensor())
 dashboard = Dashboard()
 runner = Runner()
 
