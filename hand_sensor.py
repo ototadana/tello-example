@@ -47,6 +47,8 @@ class HandSensor(Startable):
     def __get_command_by_hand(self, hlm: Sequence[Landmark]) -> str:
         if self.__is_up(hlm):
             return "up 20"
+        if self.__is_down(hlm):
+            return "down 20"
         return ""
 
     def __is_up(self, hlm: Sequence[Landmark]) -> bool:
@@ -57,5 +59,16 @@ class HandSensor(Startable):
         if hlm[16].y < hlm[15].y < hlm[14].y < hlm[0].y:
             return False
         if hlm[20].y < hlm[19].y < hlm[18].y < hlm[0].y:
+            return False
+        return True
+
+    def __is_down(self, hlm: Sequence[Landmark]) -> bool:
+        if not (hlm[8].y > hlm[7].y > hlm[6].y > hlm[5].y > hlm[0].y):
+            return False
+        if hlm[12].y > hlm[11].y > hlm[10].y > hlm[0].y:
+            return False
+        if hlm[16].y > hlm[15].y > hlm[14].y > hlm[0].y:
+            return False
+        if hlm[20].y > hlm[19].y > hlm[18].y > hlm[0].y:
             return False
         return True
