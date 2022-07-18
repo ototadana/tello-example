@@ -49,6 +49,10 @@ class HandSensor(Startable):
             return "up 20"
         if self.__is_down(hlm):
             return "down 20"
+        if self.__is_left(hlm):
+            return "left 20"
+        if self.__is_right(hlm):
+            return "right 20"
         return ""
 
     def __is_up(self, hlm: Sequence[Landmark]) -> bool:
@@ -70,5 +74,27 @@ class HandSensor(Startable):
         if hlm[16].y > hlm[15].y > hlm[14].y > hlm[0].y:
             return False
         if hlm[20].y > hlm[19].y > hlm[18].y > hlm[0].y:
+            return False
+        return True
+
+    def __is_left(self, hlm: Sequence[Landmark]) -> bool:
+        if not (hlm[8].x < hlm[7].x < hlm[6].x < hlm[5].x < hlm[0].x):
+            return False
+        if hlm[12].x < hlm[11].x < hlm[10].x < hlm[0].x:
+            return False
+        if hlm[16].x < hlm[15].x < hlm[14].x < hlm[0].x:
+            return False
+        if hlm[20].x < hlm[19].x < hlm[18].x < hlm[0].x:
+            return False
+        return True
+
+    def __is_right(self, hlm: Sequence[Landmark]) -> bool:
+        if not (hlm[8].x > hlm[7].x > hlm[6].x > hlm[5].x > hlm[0].x):
+            return False
+        if hlm[12].x > hlm[11].x > hlm[10].x > hlm[0].x:
+            return False
+        if hlm[16].x > hlm[15].x > hlm[14].x > hlm[0].x:
+            return False
+        if hlm[20].x > hlm[19].x > hlm[18].x > hlm[0].x:
             return False
         return True
