@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Sequence
 
 import mediapipe as mp
+import numpy as np
 
 from info import Info
 from logger import get_logger
@@ -45,15 +46,27 @@ class HandSensor(Startable):
         return ""
 
     def __get_command_by_hand(self, hlm: Sequence[Landmark]) -> str:
-        if self.__is_up(hlm):
+        a = self.__angle(hlm[5], hlm[6], hlm[8])
+
+        if self.__is_up(hlm) and a > 60 and a < 120:
             return "up 20"
-        if self.__is_down(hlm):
+        if self.__is_down(hlm) and a > 60 and a < 120:
             return "down 20"
-        if self.__is_left(hlm):
+        if self.__is_left(hlm) and a > 150:
             return "left 20"
-        if self.__is_right(hlm):
+        if self.__is_right(hlm) and a < 30:
             return "right 20"
         return ""
+
+    def __angle(self, la: Landmark, lb: Landmark, lc: Landmark) -> float:
+        a = np.array([la.x, la.y])
+        b = np.array([lb.x, lb.y])
+        c = np.array([lc.z, lc.y])
+        ba = a - b
+        bc = c - b
+        cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
+        angle = np.arccos(cosine_angle)
+        return np.degrees(angle)
 
     def __is_up(self, hlm: Sequence[Landmark]) -> bool:
         if not (hlm[8].y < hlm[7].y < hlm[6].y < hlm[5].y < hlm[0].y):
